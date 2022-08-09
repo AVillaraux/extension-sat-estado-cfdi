@@ -1,0 +1,24 @@
+{
+  "name": "Consulta el estado de un CFDI en SAT México",
+  "description": "Esta extensión permite consultar el estado de un CFDI en el SAT, valida CFDI 3.3 y 4.0, no tiene ninguna relación con SAT México",
+  "version": "1.0.8",
+  "manifest_version": 3,
+  "host_permissions": [
+    "https://consultaqr.facturaelectronica.sat.gob.mx/"
+  ],
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "/images/sat-estado-cfdi-16.png",
+      "32": "/images/sat-estado-cfdi-32.png",
+      "48": "/images/sat-estado-cfdi-48.png",
+      "128": "/images/sat-estado-cfdi-128.png"
+    }
+  },
+  "icons": {
+    "16": "/images/sat-estado-cfdi-16.png",
+    "32": "/images/sat-estado-cfdi-32.png",
+    "48": "/images/sat-estado-cfdi-48.png",
+    "128": "/images/sat-estado-cfdi-128.png"
+  }
+}

@@ -1,0 +1,5 @@
+/build.crx
+/build.pem
+/build.zip
+/node_modules/
+.idea

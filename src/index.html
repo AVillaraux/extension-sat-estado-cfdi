@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Validar XML CFDI en el SAT México</title>
+  </head>
+  <body class="bg-dark text-white">
+    <div class="container mt-2">
+      <h3 class="text-center">Cargar XML a validar</h3>
+      <label for="cfdi">Seleccione un archivo XML de un CFDi:</label>
+      <input type="file"
+             id="cfdi" name="cfdi"
+             accept="text/xml"
+             class="form-control mb-3">
+      <pre id="output"></pre>
+      <button class="btn btn-outline-primary mt-3 mb-3" id="loadFile">Cargar archivo</button>
+    </div>
+    <div id="liveAlertPlaceholder" class="ms-2 me-2"></div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

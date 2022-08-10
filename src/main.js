@@ -7,6 +7,9 @@ import { SoapConsumerClient, SoapClientFactory } from '@nodecfdi/sat-estado-cfdi
 import { install } from '@nodecfdi/cfdiutils-common'
 
 const alertPlaceholder = document.querySelector('#liveAlertPlaceholder')
+let input = document.querySelector('#cfdi')
+let output = document.querySelector('#output')
+let dataXML = ''
 
 const alert = (message, type) => {
     alertPlaceholder.innerHTML =
@@ -15,9 +18,6 @@ const alert = (message, type) => {
     </div>`
 }
 
-let input = document.querySelector('#cfdi')
-let output = document.querySelector('#output')
-let dataXML = ''
 const getData = () => {
 
     if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
@@ -41,20 +41,19 @@ const getData = () => {
             const dataFile = fr.result
             // creamos el extractor
             const extractor = new DiscoverExtractor()
+            let expression = ''
             try{
                 // Accedemos al contenido en nuestro archivo XML
                 const document = new DOMParser().parseFromString(dataFile, 'text/xml')
-                const expression = extractor.extract(document)
+                expression = extractor.extract(document)
                 // y también podemos obtener los valores inviduales
                 dataXML = extractor.obtain(document)
             } catch (error) {
                 alert('El archivo cargado no es un xml de un CFDi, no se encuentra timbrado o cuenta con un formato que impide ser leído', 'danger')
+                clearData()
                 return
             }
 
-            const expresion = `?re=${dataXML.re}&rr=${dataXML.rr}&tt=${dataXML.tt}&id=${dataXML.id}`
-
-            input.value = ''
             alert(`
               Archivo cargado exitosamente, esperando respuesta del servidor...
               <div class="spinner-border text-primary" role="status">
@@ -64,6 +63,8 @@ const getData = () => {
 
             // Queda pendiente implementación
             /*
+            const expresion = `?re=${dataXML.re}&rr=${dataXML.rr}&tt=${dataXML.tt}&id=${dataXML.id}`
+
             const soapClientFactory = new SoapClientFactory({ timeout: 20000 });
             const client = new SoapConsumerClient(soapClientFactory);
             const response = await client.consume(
@@ -144,4 +145,8 @@ const getData = () => {
     }
 }
 
+const clearData = () => {
+    input.value = ''
+    output.innerHTML = ''
+}
 document.querySelector('#loadFile').addEventListener("click", getData)

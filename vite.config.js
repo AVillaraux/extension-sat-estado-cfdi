@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
+import { defineConfig, normalizePath } from 'vite'
 import { resolve } from 'path'
-import copy from 'rollup-plugin-copy'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig(() => {
     return {
@@ -19,23 +19,23 @@ export default defineConfig(() => {
 
                         return 'assets/[name]-[hash][extname]';
                     },
-                },
-                plugins: [
-                    copy({
-                        targets: [
-                            {
-                                src: 'src/manifest.json',
-                                dest: resolve(__dirname, './dist')
-                            },
-                            {
-                                src: 'src/images',
-                                dest: resolve(__dirname, './dist')
-                            }
-                        ],
-                        verbose: true
-                    })
-                ]
+                }
             }
-        }
+        },
+        plugins: [
+            viteStaticCopy({
+                targets: [
+                    {
+                        src: normalizePath(resolve(__dirname, './src/manifest.json')),
+                        dest: './'
+                    },
+                    {
+                        src: normalizePath(resolve(__dirname, './src/images')),
+                        dest: './'
+                    }
+                ],
+                verbose: true
+            })
+        ]
     }
 })

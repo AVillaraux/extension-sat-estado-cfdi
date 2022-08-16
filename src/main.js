@@ -1,10 +1,12 @@
 import './css/style.css'
 import './css/boostrap.min.css'
 
-import { DOMParser } from '@xmldom/xmldom'
+import { DOMParser, XMLSerializer, DOMImplementation } from '@xmldom/xmldom'
 import { DiscoverExtractor } from '@nodecfdi/cfdi-expresiones'
 import { SoapConsumerClient, SoapClientFactory } from '@nodecfdi/sat-estado-cfdi-soap'
 import { install } from '@nodecfdi/cfdiutils-common'
+
+install(new DOMParser(), new XMLSerializer(), new DOMImplementation())
 
 const alertPlaceholder = document.querySelector('#liveAlertPlaceholder')
 let input = document.querySelector('#cfdi')
@@ -62,83 +64,29 @@ const getData = () => {
               `, 'success')
 
             // Queda pendiente implementación
-            /*
-            const expresion = `?re=${dataXML.re}&rr=${dataXML.rr}&tt=${dataXML.tt}&id=${dataXML.id}`
-
+            const dataExpression = `?re=${dataXML.re}&rr=${dataXML.rr}&tt=${dataXML.tt}&id=${dataXML.id}`
             const soapClientFactory = new SoapClientFactory({ timeout: 20000 });
             const client = new SoapConsumerClient(soapClientFactory);
             const response = await client.consume(
                 'https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc',
-                expresion
+                dataExpression
             );
-            console.log(response)
             const satResponse = {
                 CodigoEstatus: response.get('CodigoEstatus'),
                 EsCancelable: response.get('EsCancelable'),
                 Estado: response.get('Estado'),
                 EstatusCancelacion: response.get('EstatusCancelacion'),
                 ValidacionEFOS: response.get('ValidacionEFOS'),
-            };
+            }
             alert(`
                     <a href="${expression}" target="_blank">Consulta directa en el SAT</a> <br><br>
                     <strong>UUID:</strong> ${dataXML.id} <br>
                     <strong>Codigo de Estatus:</strong> ${satResponse.CodigoEstatus} <br>
                     <strong>Es cancelable:</strong> ${satResponse.EsCancelable} <br>
                     <strong>Estado:</strong> ${satResponse.Estado} <br>
-                    <strong>Estatus de cancelación:</strong> ${satResponse.EstatusCancelacion}
+                    <strong>Estatus de cancelación:</strong> ${satResponse.EstatusCancelacion} <br>
                     <strong>Validación EFOS:</strong> ${satResponse.ValidacionEFOS}
-                    `
-                    ,'success')
-            */
-
-            const sr =
-                `<soapenv:Envelope 
-                    xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                    xmlns:tem="http://tempuri.org/">
-                    <soapenv:Header/>
-                    <soapenv:Body>
-                      <tem:Consulta>
-                        <tem:expresionImpresa>?re=${dataXML.re}&amp;rr=${dataXML.rr}&amp;tt=${dataXML.tt}&amp;id=${dataXML.id}</tem:expresionImpresa>
-                      </tem:Consulta>
-                    </soapenv:Body>
-                  </soapenv:Envelope>`
-
-            const xmlhttp = new XMLHttpRequest()
-            xmlhttp.open('POST', 'https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc', true)
-            xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState === 4) {
-                    if (xmlhttp.status === 200) {
-                        const documentResponse = new DOMParser().parseFromString(xmlhttp.responseText, 'text/xml')
-                        const codigoEsatus = (documentResponse.getElementsByTagName('a:CodigoEstatus')[0].firstChild) ? documentResponse.getElementsByTagName('a:CodigoEstatus')[0].firstChild.data : ''
-                        const esCancelable = (documentResponse.getElementsByTagName('a:EsCancelable')[0].firstChild) ? documentResponse.getElementsByTagName('a:EsCancelable')[0].firstChild.data : ''
-                        const estado = (documentResponse.getElementsByTagName('a:Estado')[0].firstChild) ? documentResponse.getElementsByTagName('a:Estado')[0].firstChild.data : ''
-                        const estatusCancelacion = (documentResponse.getElementsByTagName('a:EstatusCancelacion')[0].firstChild) ? documentResponse.getElementsByTagName('a:EstatusCancelacion')[0].firstChild.data : ''
-                        const validacionEFOS = (documentResponse.getElementsByTagName('a:ValidacionEFOS')[0].firstChild) ? documentResponse.getElementsByTagName('a:ValidacionEFOS')[0].firstChild.data : ''
-
-                        let estadoColor = estado
-                        if(estado === 'Cancelado') {
-                            estadoColor = `<span class="text-danger">${estado}</span>`
-                        }
-
-                        alert(`
-                              <a href="${expression}" target="_blank">Consulta directa en el SAT</a> <br><br>
-                              <strong>UUID:</strong> ${dataXML.id} <br>
-                              <strong>Codigo de Estatus:</strong> ${codigoEsatus} <br>
-                              <strong>Es cancelable:</strong> ${esCancelable} <br>
-                              <strong>Estado:</strong> ${estadoColor} <br>
-                              <strong>Estatus de cancelación:</strong> ${estatusCancelacion} <br>
-                              <strong>Validación EFOS:</strong> ${validacionEFOS}
-                              `
-                            ,'success')
-                    }
-                }
-            }
-            // Send the POST request
-            xmlhttp.setRequestHeader('Accept', 'text/xml')
-            xmlhttp.setRequestHeader('Content-Type', 'text/xml;charset="utf-8"')
-            xmlhttp.setRequestHeader('SOAPAction', 'http://tempuri.org/IConsultaCFDIService/Consulta')
-            xmlhttp.send(sr)
-
+                    `,'success')
         }
 
         fr.readAsText(input.files[0])
